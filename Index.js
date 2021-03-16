@@ -12,7 +12,7 @@ const connection = mysql.createConnection({
     user: 'root',
   
     // Be sure to update with your own MySQL password!
-    password: 'password',
+    password: 'Af3221996',
     database: 'greatbayDB',
   });
   
@@ -84,7 +84,60 @@ inquirer
         readProducts() 
   
     }
+    else{
+        console.log("have a nice day!")
+        connection.end()
+    }
 })}
+
+const selectProduct =(answers)=>{
+    const item =answers.listings
+connection.query(
+    
+        `SELECT * FROM listings WHERE item=?`,
+        [item],
+    
+    (err, res) => {
+        if (err) throw err;
+        res.forEach(({ id,item, catagory, price }) => {
+          console.log(`${id} | ${item} | ${catagory} | ${price}`);
+        })
+    inquirer
+    .prompt([
+        {
+            type:'input',
+            name: 'pricechange',
+            message:'how much are you bidding?',
+                    
+        },
+    ])
+    .then((answers) => {
+        if (res.price > answers.pricechange){
+            console.log('original bidding price is higher then new price!')
+        }
+        else{
+            console.log('Updating price...\n');
+  connection.query(
+    'UPDATE listings SET ? where ? ',
+    [
+      {
+        price: answers.pricechange,
+      },
+      {
+        item:item,
+      }
+    ],
+    (err, res) => {
+      if (err) throw err;
+      console.log(`price changed!\n`);
+      start()
+        }
+  )}
+    
+    }
+    )})}
+
+
 
 const readProducts = () => {
     console.log('Selecting all listings...\n');
@@ -97,20 +150,23 @@ const readProducts = () => {
       inquirer
         .prompt([
             {
-                type: 'input',
+                type: 'rawlist',
                 name: 'listings',
                 choices(){
                     const choiceArray =[];
                     res.forEach(({item})=> {
-                        choiceArray.push(item);
-                    }); console.log(choiceArray)
-                    return choiceArray},
-                
-                message: choiceArray
+                        choiceArray.push(item)
+                    });
+                    return choiceArray
+                },
+                message:'what would you like to bid on?'
             }
-            
-                
-    ]);
+        ])
+        .then((answers) =>{
+            selectProduct(answers)
+        })
+
+    
 })}
 //   const updateProduct = () => {
 //     console.log('Updating all Rocky Road quantities...\n');
