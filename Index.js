@@ -1,3 +1,4 @@
+const { restoreDefaultPrompts } = require("inquirer");
 const inquirer = require("inquirer");
 const mysql = require('mysql');
 
@@ -91,17 +92,26 @@ const readProducts = () => {
       if (err) throw err;
       // Log all results of the SELECT statement
       console.log(res);
+      
+    
       inquirer
         .prompt([
             {
                 type: 'input',
                 name: 'listings',
-                message: res.forEach(({id,name}) => {
-
+                choices(){
+                    const choiceArray =[];
+                    res.forEach(({item})=> {
+                        choiceArray.push(item);
+                    }); console.log(choiceArray)
+                    return choiceArray},
+                
+                message: choiceArray
             }
-                )}]);
-    });
-}
+            
+                
+    ]);
+})}
 //   const updateProduct = () => {
 //     console.log('Updating all Rocky Road quantities...\n');
 //     const query = connection.query(
