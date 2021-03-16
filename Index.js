@@ -11,7 +11,7 @@ const connection = mysql.createConnection({
     user: 'root',
   
     // Be sure to update with your own MySQL password!
-    password: 'Af3221996',
+    password: 'password',
     database: 'greatbayDB',
   });
   
@@ -70,7 +70,7 @@ function start(){
 inquirer
 .prompt([
     {
-        type:'checkbox',
+        type:'list',
         name: 'list',
         message:'do you want to add a great-bay listing?',
         choices:['add a listing','bid','leave']        
@@ -79,9 +79,52 @@ inquirer
     .then((answers) =>{
     if (answers.list == 'add a listing'){
     addlist()
+    } else if (answers.list == 'bid'){
+        readProducts() 
+  
     }
 })}
 
+const readProducts = () => {
+    console.log('Selecting all listings...\n');
+    connection.query('SELECT * FROM listings', (err, res) => {
+      if (err) throw err;
+      // Log all results of the SELECT statement
+      console.log(res);
+      inquirer
+        .prompt([
+            {
+                type: 'input',
+                name: 'listings',
+                message: res.forEach(({id,name}) => {
+
+            }
+                )}]);
+    });
+}
+//   const updateProduct = () => {
+//     console.log('Updating all Rocky Road quantities...\n');
+//     const query = connection.query(
+//       'UPDATE products SET ? WHERE ?',
+//       [
+//         {
+//           quantity: 100,
+//         },
+//         {
+//           flavor: 'Rocky Road',
+//         },
+//       ],
+//       (err, res) => {
+//         if (err) throw err;
+//         console.log(`${res.affectedRows} products updated!\n`);
+//         // Call deleteProduct AFTER the UPDATE completes
+//         deleteProduct();
+//       }
+//     );
+  
+//     // logs the actual query being run
+//     console.log(query.sql);
+//   };
 
 
 
@@ -90,4 +133,3 @@ connection.connect((err) => {
     console.log(`connected as id ${connection.threadId}\n`);
     start();
   });
-  
